@@ -1,0 +1,22 @@
+nuclei -l probedsub.txt -t ~/nuclei-templates/http/exposures -o nucleiexposures.txt
+
+_block:nucleicve_
+nuclei -l probedsub.txt -t ~/nuclei-templates/http/cves -o nucleicves.txt
+_block:nucleicve_
+
+_block:nucleicnvd_
+nuclei -l probedsub.txt -t ~/nuclei-templates/http/cnvd -o nucleicnvd.txt
+_block:nucleicnvd_
+
+_block:nucleimisconfiguration_
+nuclei -l probedsub.txt -t ~/nuclei-templates/http/misconfiguration -o nucleimisconfiguration.txt
+_block:nucleimisconfiguration_
+
+_block:nucleiexposedpanels_
+nuclei -l probedsub.txt -t ~/nuclei-templates/http/exposed-panels -o nucleiexposedpanels.txt
+_block:nucleiexposedpanels_
+
+_block:subjack_
+subjack -w allsub.txt -t 100 -timeout 30 -o -v subjack.txt -https
+_block:subjack_
+
