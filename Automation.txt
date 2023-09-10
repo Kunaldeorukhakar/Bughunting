@@ -1,0 +1,39 @@
+subfinder -d _target_ -t 100 -v -o sub1.txt
+_blocker_
+amass enum -config ~/Documents/tools/amass.config.ini -brute -d _target_ -v -o sub2.txt
+_blocker_
+sort sub1.txt sub2.txt | uniq -u > allsub.txt
+_blocker_
+cat allsub.txt | httpx | tee -a probedsub.txt
+_blocker_
+
+_block:vulnpattern_
+cat probedsub.txt | waybackurls > waybackurls.txt
+cat probedsub.txt | gau | anew waybackurls.txt
+cat waybackurls.txt | gf xss | tee -a gfxss.txt
+cat waybackurls.txt | gf sqli | tee -a gfsqli.txt
+cat waybackurls.txt | gf rce | tee -a gfrce.txt
+cat waybackurls.txt | gf lfi | tee -a gflfi.txt
+cat waybackurls.txt | gf ssrf | tee -a gfssrf.txt
+cat waybackurls.txt | gf idor | tee -a gfidor.txt
+cat waybackurls.txt | gf redirect | tee -a gfredirect.txt
+_block:vulnpattern_
+
+_block:nucleifuzzerxss_
+nuclei -l gfxss.txt -t ~/nuclei-templates/fuzzing-templates/xss -o nucleifuzzxss.txt
+_block:nucleifuzzerxss_
+
+_block:nucleifuzzerssrf_
+nuclei -l gfssrf.txt -t ~/nuclei-templates/fuzzing-templates/ssrf -o nucleifuzzssrf.txt
+_block:nucleifuzzerssrf_
+
+_block:nucleifuzzersqli_
+nuclei -l gfsqli.txt -t ~/nuclei-templates/fuzzing-templates/sqli -o nucleifuzzsqli.txt
+_block:nucleifuzzersqli_
+
+_block:nucleifuzzerlfi_
+nuclei -l gflfi.txt -t ~/nuclei-templates/fuzzing-templates/lfi -o nucleifuzzlfi.txt
+_block:nucleifuzzerlfi_
+
+nuclei -l gfredirect.txt -t ~/nuclei-templates/fuzzing-templates/redirect -o nucleifuzzredirect.txt
+
